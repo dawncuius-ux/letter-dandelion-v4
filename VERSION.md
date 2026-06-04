@@ -1,8 +1,8 @@
-# Letter Dandelion V5
+# Letter Dandelion V5.1
 
 Date: 2026-06-03
 
-V5 is the saved baseline for the immersive full-screen interactive 3D farewell dandelion poster.
+V5.1 is the saved baseline for the immersive full-screen interactive 3D farewell dandelion poster with improved mobile readability.
 
 ## Source
 
@@ -14,7 +14,7 @@ V5 is the saved baseline for the immersive full-screen interactive 3D farewell d
 
 ## Stability
 
-- Version: `POSTER_VERSION = "V5"`
+- Version: `POSTER_VERSION = "V5.1"`
 - Random seed: `POSTER_RANDOM_SEED = 20260603`
 - The scene is seed-locked so refreshes keep the same generated composition.
 
@@ -22,6 +22,7 @@ V5 is the saved baseline for the immersive full-screen interactive 3D farewell d
 
 - Full-screen immersive canvas using the entire browser viewport.
 - Mobile view uses dynamic viewport height and a short-side scene unit to keep the flower ball readable.
+- Mobile view enlarges the flower ball slightly, reduces core overexposure, and raises name contrast.
 - Clean blue gradient background with soft lower mist.
 - A static `noise.jpg` overlay uses `soft-light` at `20%` opacity for a retro grain texture.
 - 294 filaments are distributed on a real 3D sphere using golden-angle sampling.
@@ -62,6 +63,7 @@ V5 is the saved baseline for the immersive full-screen interactive 3D farewell d
 - V3: adds wind, hover, message, release interactions, glow, ambient seeds, and retro noise.
 - V4: saves the centered blue-noise composition, slows the release animation, and improves render performance.
 - V5: removes the fixed 16:9 board, expands the scene to full screen, improves mobile sizing, and doubles ambient drifting seeds.
+- V5.1: improves mobile readability with a larger flower ball, lower core glow, lighter terminal glow, and stronger name contrast.
 
 ## Next Iteration Notes
 

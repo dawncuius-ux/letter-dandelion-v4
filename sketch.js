@@ -1,4 +1,4 @@
-const POSTER_VERSION = "V5";
+const POSTER_VERSION = "V5.1";
 const POSTER_RANDOM_SEED = 20260603;
 const RENDER_CONFIG = {
   maxPixelDensity: 1.5,
@@ -25,6 +25,8 @@ const NAME_STYLE = {
   fontSize: 11,
   hitWidthPerChar: 14,
   hitHeight: 11,
+  mobileFontBoost: 1.02,
+  mobileAlphaBoost: 1.36,
 };
 const RAY_BANDS = {
   inner: {
@@ -74,6 +76,11 @@ const OVEREXPOSED_GLOW = {
   terminalHotCore: 1.46,
   floatingSeedBoost: 1.05,
   sparkChance: 0.36,
+  mobileScale: 0.5,
+  mobileCoreScale: 0.36,
+  mobileHotCoreScale: 0.42,
+  mobileTerminalThreshold: 0.12,
+  mobileSparkThreshold: 0.2,
 };
 const SPHERE_LAYOUT = {
   goldenAngle: Math.PI * (3 - Math.sqrt(5)),
@@ -205,7 +212,7 @@ function initializeScene() {
   textureGrains.length = 0;
   nameLabels.length = 0;
 
-  const widthScale = width < 720 ? 1.24 : 1.12;
+  const widthScale = width < 720 ? 1.42 : 1.12;
   sceneUnit = min(width * widthScale, height * 1.58);
   coreX = width * SCENE_LAYOUT.coreX;
   coreY = height * SCENE_LAYOUT.coreY;
@@ -760,15 +767,16 @@ function drawRayTerminal(ray, endPoint, visibility) {
 }
 
 function drawCoreBloom() {
-  drawGlowImage(coreGlowSprite, coreX, coreY, OVEREXPOSED_GLOW.coreHalo * 1.18, 92);
+  const glowFactor = mobileCoreGlowFactor();
+  drawGlowImage(coreGlowSprite, coreX, coreY, OVEREXPOSED_GLOW.coreHalo * 1.18 * glowFactor, 92 * glowFactor);
 
   push();
   blendMode(ADD);
   noStroke();
-  fill(255, 255, 245, 82);
-  circle(coreX, coreY, 9);
-  fill(255, 255, 255, 188);
-  circle(coreX, coreY, 10.5);
+  fill(255, 255, 245, 72 * glowFactor);
+  circle(coreX, coreY, 8.4 * lerp(0.82, 1, glowFactor));
+  fill(255, 255, 255, 158 * glowFactor);
+  circle(coreX, coreY, 9.4 * lerp(0.78, 1, glowFactor));
   blendMode(BLEND);
   pop();
 }
@@ -776,25 +784,31 @@ function drawCoreBloom() {
 function drawTerminalBloomAura(endPoint, terminal, glowAlpha, scale) {
   const radius = terminal.glowSize * scale;
   const strength = constrain(glowAlpha / 255, 0, 1);
-  if (strength <= 0.018) {
+  const minStrength = isMobileViewport() ? OVEREXPOSED_GLOW.mobileTerminalThreshold : 0.018;
+  if (strength <= minStrength) {
     return;
   }
 
-  drawGlowImage(terminalGlowSprite, endPoint.x, endPoint.y, radius * 3.8, min(72, glowAlpha * 0.24));
-  drawTerminalSpark(endPoint.x, endPoint.y, radius, glowAlpha, terminal.sparkAngle, terminal.sparkStrength);
+  const glowFactor = mobileGlowFactor();
+  drawGlowImage(terminalGlowSprite, endPoint.x, endPoint.y, radius * 3.8 * glowFactor, min(72, glowAlpha * 0.24) * glowFactor);
+  if (!isMobileViewport() || strength > OVEREXPOSED_GLOW.mobileSparkThreshold) {
+    drawTerminalSpark(endPoint.x, endPoint.y, radius, glowAlpha * glowFactor, terminal.sparkAngle, terminal.sparkStrength);
+  }
 }
 
 function drawTerminalHotCore(endPoint, terminal, glowAlpha, scale) {
   const radius = terminal.glowSize * scale;
   const strength = constrain(glowAlpha / 255, 0, 1);
-  if (strength <= 0.012) {
+  const minStrength = isMobileViewport() ? OVEREXPOSED_GLOW.mobileTerminalThreshold : 0.012;
+  if (strength <= minStrength) {
     return;
   }
 
   push();
   blendMode(ADD);
   noStroke();
-  fill(255, 255, 255, min(188, 42 + glowAlpha * OVEREXPOSED_GLOW.terminalHotCore * 0.5));
+  const glowFactor = mobileHotCoreFactor();
+  fill(255, 255, 255, min(188, 42 + glowAlpha * OVEREXPOSED_GLOW.terminalHotCore * 0.5) * glowFactor);
   circle(endPoint.x, endPoint.y, max(1.15, radius * 0.3));
   blendMode(BLEND);
   pop();
@@ -835,6 +849,30 @@ function drawSparkLine(x, y, angle, length) {
   const dx = cos(angle) * length;
   const dy = sin(angle) * length;
   line(x - dx * 0.5, y - dy * 0.5, x + dx * 0.5, y + dy * 0.5);
+}
+
+function isMobileViewport() {
+  return width < 720;
+}
+
+function mobileGlowFactor() {
+  return isMobileViewport() ? OVEREXPOSED_GLOW.mobileScale : 1;
+}
+
+function mobileCoreGlowFactor() {
+  return isMobileViewport() ? OVEREXPOSED_GLOW.mobileCoreScale : 1;
+}
+
+function mobileHotCoreFactor() {
+  return isMobileViewport() ? OVEREXPOSED_GLOW.mobileHotCoreScale : 1;
+}
+
+function mobileNameFactor() {
+  return isMobileViewport() ? NAME_STYLE.mobileFontBoost : 1;
+}
+
+function mobileNameAlphaFactor() {
+  return isMobileViewport() ? NAME_STYLE.mobileAlphaBoost : 1;
 }
 
 function drawFloatingSeeds() {
@@ -914,8 +952,19 @@ function drawNameLabels() {
     const selected = getFocusLabel() === label;
     const dim = getFocusLabel() && !selected ? WIND.focusDim : 1;
     const visibility = depthVisibility(endPoint.z);
-    textSize(NAME_STYLE.fontSize * endPoint.scale * (selected ? 1.1 : 1));
-    fill(255, 255, 255, (selected ? 255 : label.alpha * visibility) * dim * item.alphaMultiplier);
+    const textSizeValue = NAME_STYLE.fontSize * endPoint.scale * mobileNameFactor() * (selected ? 1.1 : 1);
+    const textAlpha = min(
+      255,
+      (selected ? 255 : label.alpha * visibility) * dim * item.alphaMultiplier * mobileNameAlphaFactor()
+    );
+    textSize(textSizeValue);
+    if (isMobileViewport()) {
+      fill(30, 112, 174, textAlpha * 0.32);
+      text(label.message.label, endPoint.x - 0.55, endPoint.y + 0.55);
+      fill(42, 126, 188, textAlpha * 0.46);
+      text(label.message.label, endPoint.x + 0.75, endPoint.y + 0.75);
+    }
+    fill(255, 255, 255, textAlpha);
     text(label.message.label, endPoint.x, endPoint.y);
   }
 

@@ -23,6 +23,12 @@ This project is a static site. Deploy the whole folder to any static hosting ser
 - Netlify
 - Cloudflare Pages
 
+Current GitHub Pages preview:
+
+```text
+https://dawncuius-ux.github.io/letter-dandelion-v4/?v=V5.1
+```
+
 The deploy root must include:
 
 - `index.html`
