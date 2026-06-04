@@ -10,6 +10,7 @@ V4 is the saved baseline for the interactive 3D farewell dandelion poster.
 - `style.css`
 - `sketch.js`
 - `noise.jpg`
+- `p5.min.js`
 
 ## Stability
 
@@ -44,13 +45,14 @@ V4 is the saved baseline for the interactive 3D farewell dandelion poster.
 - Terminal and core glow are pre-rendered sprites rather than per-frame canvas blur.
 - Drag handlers avoid extra `redraw()` calls because the sketch already runs continuously.
 - The noise overlay is handled by CSS instead of p5, so it does not add per-frame canvas work.
+- `p5.min.js` is vendored locally to avoid CDN access failures on corporate networks.
 
 ## Sharing Preview Links
 
 - Local file links such as `file:///.../index.html` only work on your own machine.
 - For someone on the same Wi-Fi, run a local server and share your LAN address, for example `http://YOUR_LAN_IP:8765/`.
 - For a stable public link, deploy the folder to GitHub Pages, Vercel, Netlify, or Cloudflare Pages.
-- This is a static site, so no build step is required. The deploy root should contain `index.html`, `style.css`, `sketch.js`, and `noise.jpg`.
+- This is a static site, so no build step is required. The deploy root should contain `index.html`, `style.css`, `sketch.js`, `noise.jpg`, and `p5.min.js`.
 
 ## History
 

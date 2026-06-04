@@ -29,6 +29,7 @@ The deploy root must include:
 - `style.css`
 - `sketch.js`
 - `noise.jpg`
+- `p5.min.js`
 
 After deployment, share the generated public URL.
 
