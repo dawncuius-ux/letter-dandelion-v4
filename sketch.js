@@ -1,11 +1,11 @@
-const POSTER_VERSION = "V4";
+const POSTER_VERSION = "V5";
 const POSTER_RANDOM_SEED = 20260603;
 const RENDER_CONFIG = {
   maxPixelDensity: 1.5,
   frameRate: 45,
 };
 const RAY_COUNT = 294;
-const FLOATING_SEED_COUNT = 32;
+const FLOATING_SEED_COUNT = 64;
 const WASH_PATCH_COUNT = 56;
 const LIGHT_STREAK_COUNT = 18;
 const PAPER_FIBER_COUNT = 260;
@@ -142,6 +142,7 @@ const CHARACTER_POOL = Array.from("谢念愿风光行远明亮顺遂安新花星
 
 let coreX = 0;
 let coreY = 0;
+let sceneUnit = 0;
 let stemStartX = 0;
 let stemStartY = 0;
 let staticBackgroundLayer;
@@ -204,6 +205,8 @@ function initializeScene() {
   textureGrains.length = 0;
   nameLabels.length = 0;
 
+  const widthScale = width < 720 ? 1.24 : 1.12;
+  sceneUnit = min(width * widthScale, height * 1.58);
   coreX = width * SCENE_LAYOUT.coreX;
   coreY = height * SCENE_LAYOUT.coreY;
   stemStartX = width * SCENE_LAYOUT.stemStartX;
@@ -260,7 +263,7 @@ function pickRayBand(roll) {
 function createRay(band, index) {
   const config = RAY_BANDS[band];
   const shell = pow(random(), config.shellPower);
-  let radius = width * lerp(config.radius[0], config.radius[1], shell);
+  let radius = sceneUnit * lerp(config.radius[0], config.radius[1], shell);
 
   if (random() < RAY_LONG_VARIATION.chance) {
     radius *= random(RAY_LONG_VARIATION.scale[0], RAY_LONG_VARIATION.scale[1]);
@@ -360,8 +363,8 @@ function createSphereDirection(index, total) {
 }
 
 function createNameLocal(seed) {
-  const radius = width * seed.radius;
-  const z = constrain(width * seed.z, -radius * SPHERE_LAYOUT.labelDepthLimit, radius * SPHERE_LAYOUT.labelDepthLimit);
+  const radius = sceneUnit * seed.radius;
+  const z = constrain(sceneUnit * seed.z, -radius * SPHERE_LAYOUT.labelDepthLimit, radius * SPHERE_LAYOUT.labelDepthLimit);
   const planarRadius = sqrt(max(0, radius * radius - z * z));
 
   return createVector(cos(seed.angle) * planarRadius, sin(seed.angle) * planarRadius, z);
@@ -371,7 +374,7 @@ function createProjectionContext() {
   return {
     cosY: cos(rotationY),
     sinY: sin(rotationY),
-    perspectiveDistance: width * ROTATION.perspective,
+    perspectiveDistance: sceneUnit * ROTATION.perspective,
   };
 }
 
@@ -416,7 +419,7 @@ function getFocusMultiplier() {
 }
 
 function depthVisibility(z) {
-  const ballRadius = width * RAY_BANDS.outer.radius[1] * 1.08;
+  const ballRadius = sceneUnit * RAY_BANDS.outer.radius[1] * 1.08;
   return constrain(map(z, -ballRadius, ballRadius, 1.16, 0.42), 0.36, 1.16);
 }
 

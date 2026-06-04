@@ -1,6 +1,6 @@
 # Letter Dandelion
 
-Interactive 3D dandelion farewell poster built with p5.js.
+Immersive full-screen interactive 3D dandelion farewell poster built with p5.js.
 
 ## Local Preview
 

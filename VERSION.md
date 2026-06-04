@@ -1,8 +1,8 @@
-# Letter Dandelion V4
+# Letter Dandelion V5
 
 Date: 2026-06-03
 
-V4 is the saved baseline for the interactive 3D farewell dandelion poster.
+V5 is the saved baseline for the immersive full-screen interactive 3D farewell dandelion poster.
 
 ## Source
 
@@ -14,18 +14,19 @@ V4 is the saved baseline for the interactive 3D farewell dandelion poster.
 
 ## Stability
 
-- Version: `POSTER_VERSION = "V4"`
+- Version: `POSTER_VERSION = "V5"`
 - Random seed: `POSTER_RANDOM_SEED = 20260603`
 - The scene is seed-locked so refreshes keep the same generated composition.
 
 ## Visual Baseline
 
-- Fixed 16:9 canvas inside the browser viewport.
+- Full-screen immersive canvas using the entire browser viewport.
+- Mobile view uses dynamic viewport height and a short-side scene unit to keep the flower ball readable.
 - Clean blue gradient background with soft lower mist.
 - A static `noise.jpg` overlay uses `soft-light` at `20%` opacity for a retro grain texture.
 - 294 filaments are distributed on a real 3D sphere using golden-angle sampling.
 - The flower ball is centered lower than V3 for a more balanced composition.
-- 32 ambient seeds drift away from the flower by default.
+- 64 ambient seeds drift away from the flower by default.
 - Filament tips include subtle fluff and a softened terminal glow.
 - The flower ball gently sways in the wind by default.
 - Hovering a name highlights that name filament while dimming the rest of the flower.
@@ -60,6 +61,7 @@ V4 is the saved baseline for the interactive 3D farewell dandelion poster.
 - V2: upgrades the flower ball to true 3D spherical distribution with drag rotation.
 - V3: adds wind, hover, message, release interactions, glow, ambient seeds, and retro noise.
 - V4: saves the centered blue-noise composition, slows the release animation, and improves render performance.
+- V5: removes the fixed 16:9 board, expands the scene to full screen, improves mobile sizing, and doubles ambient drifting seeds.
 
 ## Next Iteration Notes
 

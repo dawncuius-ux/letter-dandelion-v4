@@ -16,30 +16,32 @@
 html,
 body {
   margin: 0;
+  width: 100%;
   min-height: 100%;
+  overflow: hidden;
   background: linear-gradient(180deg, #82c9f7 0%, #dff4ff 100%);
   font-family: "Manrope", "Noto Sans SC", sans-serif;
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .viewport {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
   min-height: 100dvh;
-  display: grid;
-  place-items: center;
-  padding: 20px;
+  overflow: hidden;
 }
 
 .frame-shell {
   position: relative;
-  width: min(94vw, calc(94dvh * 16 / 9));
-  aspect-ratio: 16 / 9;
-  border-radius: 18px;
+  width: 100vw;
+  height: 100dvh;
   overflow: hidden;
-  box-shadow: var(--shadow);
   background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 52%, var(--sky-bottom) 100%);
+  touch-action: none;
 }
 
 .frame-shell::after {
@@ -58,6 +60,10 @@ body {
 #poster {
   position: absolute;
   inset: 0;
+}
+
+#poster canvas {
+  display: block;
 }
 
 .message-panel,
@@ -126,18 +132,11 @@ body {
 }
 
 @media (max-width: 720px) {
-  .viewport {
-    padding: 10px;
-  }
-
-  .frame-shell {
-    width: 100%;
-    border-radius: 18px;
-  }
-
   .message-panel,
   .ending-panel {
-    width: calc(100% - 32px);
+    width: calc(100% - 28px);
+    border-radius: 22px;
+    padding: 20px 20px 18px;
   }
 
   .message-text,
